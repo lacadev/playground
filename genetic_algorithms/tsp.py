@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
-from copy import deepcopy
-from math import ceil, sqrt
+from math import sqrt
 from pprint import pprint
 from random import randint, random, sample
 
