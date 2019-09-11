@@ -1,0 +1,1 @@
+Maybe parallelize tsp.py, but doesn't seem that good of an idea. Each generation stills need to be sequential, and operations for the same generation are fairly quick. Context switching might take up more time than actually running the program sequentially. Mmmmmm
