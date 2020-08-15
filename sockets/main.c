@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -39,6 +40,7 @@ struct sockaddr {
 int main(int argc, char *argv[]) {
   int socket_descriptor;
   struct sockaddr_in server;
+  char *message;
 
   // Create socket
   // AF_INET means we're using IPv4
@@ -63,6 +65,17 @@ int main(int argc, char *argv[]) {
   }
   printf("Connect to server successfully!\n");
 
+  // Send data to the server
+  // HTTP command to fetch the mainpage of a website
+  message = "GET / HTTP/1.1\r\n\r\n";
+  // We could also use write() instead of send(), as with any file.
+  // With sockets, write() is equivalent to send() with no flags (set to 0)
+  if (send(socket_descriptor, message, strlen(message), 0) < 0) {
+    close(socket_descriptor);
+    printf("Failed to send data to server\n");
+    exit(EXIT_FAILURE);
+  }
+  printf("Data sent successfully!\n");
 
   close(socket_descriptor);
 
