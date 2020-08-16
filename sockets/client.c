@@ -40,7 +40,7 @@ struct sockaddr {
 int main(int argc, char *argv[]) {
   int socket_descriptor;
   struct sockaddr_in server;
-  char *message;
+  char *message, server_reply[2000];
 
   // Create socket
   // AF_INET means we're using IPv4
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   }
   printf("Socket created successfully!\n");
 
-  server.sin_addr.s_addr = inet_addr("1.1.1.1");
+  server.sin_addr.s_addr = inet_addr("138.201.81.199");
   server.sin_family = AF_INET;
   server.sin_port = htons(80);
 
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
   // Send data to the server
   // HTTP command to fetch the mainpage of a website
-  message = "GET / HTTP/1.1\r\n\r\n";
+  message = "GET / HTTP/1.1\r\nHost: archlinux.org\r\n\r\n";
   // We could also use write() instead of send(), as with any file.
   // With sockets, write() is equivalent to send() with no flags (set to 0)
   if (send(socket_descriptor, message, strlen(message), 0) < 0) {
@@ -78,6 +78,16 @@ int main(int argc, char *argv[]) {
   printf("Data sent successfully!\n");
 
   close(socket_descriptor);
+
+  // Receive reply from the server
+  // Again, we could use read() instead of recv(), just like with files
+  if (recv(socket_descriptor, server_reply, 2000, 0) < 0) {
+    close(socket_descriptor);
+    printf("Failed to read data from server\n");
+    exit(EXIT_FAILURE);
+  }
+  printf("Reply received!\n");
+  printf("%s", server_reply);
 
   return 0;
 }
