@@ -77,8 +77,6 @@ int main(int argc, char *argv[]) {
   }
   printf("Data sent successfully!\n");
 
-  close(socket_descriptor);
-
   // Receive reply from the server
   // Again, we could use read() instead of recv(), just like with files
   if (recv(socket_descriptor, server_reply, 2000, 0) < 0) {
@@ -88,6 +86,8 @@ int main(int argc, char *argv[]) {
   }
   printf("Reply received!\n");
   printf("%s", server_reply);
+
+  close(socket_descriptor);
 
   return 0;
 }
