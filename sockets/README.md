@@ -2,12 +2,17 @@
 
 This is the code I wrote following [this tutorial](https://www.binarytides.com/socket-programming-c-linux-tutorial/), in an attempt to better understand how to use sockets in Linux.
 
-To run client:
+To **run client**:
 ```bash
 gcc client.c -o client.out && ./client.out
 ```
 
-To run server:
+To **run server**:
 ```bash
 gcc server.c -lpthread -o server.out && ./server.out
+```
+
+To **test server**:
+```bash
+telnet localhost 8888
 ```
