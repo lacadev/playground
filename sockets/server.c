@@ -42,21 +42,20 @@ int main(int argc, char *argv[]) {
 
   // Accept incoming connections
   c = sizeof(struct sockaddr_in);
-  new_socket = accept(socket_descriptor, (struct sockaddr *)& client, (socklen_t*)& c);
+  while ( (new_socket = accept(socket_descriptor, (struct sockaddr *)& client, (socklen_t*)& c)) ) {
+    char *client_ip = inet_ntoa(client.sin_addr);
+    int client_port = ntohs(client.sin_port);
+    printf("Accepted incoming connection from %s:%d\n", client_ip, client_port);
+
+    // Reply to connected client
+    message = "Hello client! I have received your connection but I have to go... bye!\n";
+    write(new_socket, message, strlen(message));
+  }
   if (new_socket < 0) {
     close(socket_descriptor);
     printf("Failed to accept incoming connection\n");
     exit(EXIT_FAILURE);
   }
-  char *client_ip = inet_ntoa(client.sin_addr);
-  int client_port = ntohs(client.sin_port);
-  printf("Accepted incoming connection from %s:%d\n", client_ip, client_port);
-
-  // Reply to connected client
-  message = "Hello client! I have received your connection but I have to go... bye!\n";
-  write(new_socket, message, strlen(message));
-
-
 
   close(socket_descriptor);
 
