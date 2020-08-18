@@ -1,6 +1,3 @@
-/* Implementation of the tutorial: */
-/* https://www.binarytides.com/socket-programming-c-linux-tutorial/ */
-
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +6,6 @@
 #include <unistd.h>
 
 /* Structs being used internally
-
 //IPv4 AF_INET sockets
 struct sockaddr_in {
   // Protocol (e.g. AF_INET, AF_INET6)
@@ -34,7 +30,6 @@ struct sockaddr {
   // 14 bytes of protocol
   char sa_data[14];
 };
-
 */
 
 int main(int argc, char *argv[]) {
