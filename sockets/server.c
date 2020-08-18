@@ -4,11 +4,14 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <pthread.h>
 
 // Missing explanations might be found in the client.c file
 
+void *connection_handler(void *);
+
 int main(int argc, char *argv[]) {
-  int socket_descriptor, new_socket, c;
+  int socket_descriptor, new_socket, c, *new_sock;
   struct sockaddr_in server, client;
   char *message;
 
@@ -48,8 +51,17 @@ int main(int argc, char *argv[]) {
     printf("Accepted incoming connection from %s:%d\n", client_ip, client_port);
 
     // Reply to connected client
-    message = "Hello client! I have received your connection but I have to go... bye!\n";
+    message = "Hello client! I have received your connection, let me assign you a handle\n";
     write(new_socket, message, strlen(message));
+
+    pthread_t sniffer_thread;
+    new_sock = malloc(1);
+    *new_sock = new_socket;
+
+    if (pthread_create( &sniffer_thread, NULL, connection_handler, (void*) new_sock) < 0) {
+      printf("Failed to create thread to handle connection\n");
+    }
+    printf("Handler has been successfully assigned\n");
   }
   if (new_socket < 0) {
     close(socket_descriptor);
@@ -58,6 +70,37 @@ int main(int argc, char *argv[]) {
   }
 
   close(socket_descriptor);
+
+  return 0;
+}
+
+// Handle connection for each client socket
+void *connection_handler(void *socket_descriptor) {
+  // Get the socket descriptor
+  int sock = *(int*) socket_descriptor;
+  int read_size;
+  char *message, client_message[2000];
+
+  // Send messages to client
+  message = "Greetings! You have been assigned a connection handler\n";
+  write(sock, message, strlen(message));
+  message = "I'll repeat whatever you say from now on\n";
+  write(sock, message, strlen(message));
+
+  // Wait for replies and repeat them back to client
+  while ( (read_size = recv(sock, client_message, 2000, 0)) > 0) {
+    write(sock, client_message, strlen(client_message));
+  }
+  if (read_size == 0) {
+    printf("Client disconnected\n");
+    fflush(stdout);
+  }
+  else if (read_size == -1) {
+    printf("Failed to read from client\n");
+  }
+
+  // Free socket pointer
+  free(socket_descriptor);
 
   return 0;
 }
